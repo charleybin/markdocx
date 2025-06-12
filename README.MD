@@ -82,6 +82,119 @@ markdocx "D:/my folder/the input.md" -o "D:/my folder/the output.md"
     
 2. 无序列表和有序列表目前最大解析层级为两级，超过两层的内容会被丢弃
 
+## 🖼️ 增强图片下载功能
+
+MarkDocx 支持增强的图片下载功能，可以解决网络图片访问中的各种问题：
+
+### 🚀 功能特性
+
+- ✅ **SSL证书验证失败** - 支持自签名证书，解决企业内网图片访问问题
+- ✅ **需要登录的图片** - 自动读取浏览器Cookie，访问私有图片资源
+- ✅ **反爬虫防护** - 模拟真实浏览器请求，绕过反爬虫机制
+- ✅ **网络超时问题** - 智能重试机制，提高下载成功率
+- ✅ **权限验证** - 支持自定义请求头，处理API接口图片
+
+### 🔧 解决的常见错误
+
+#### SSL证书问题
+**错误信息**：
+```
+[RESOURCE ERROR]: certificate verify failed: self-signed certificate
+```
+**解决方案**：程序默认跳过SSL验证，支持自签名证书
+
+#### Cookie验证问题
+**错误信息**：
+```
+[RESOURCE ERROR]: HTTP Error 403: Forbidden
+```
+**解决方案**：自动读取浏览器Cookie，支持需要登录的图片
+
+### 📋 使用方法
+
+#### 基本使用（自动功能）
+```bash
+# 普通使用，自动应用所有增强功能
+./markdocx_ubuntu.sh example/test.md
+
+# 程序会自动：
+# - 读取浏览器Cookie
+# - 跳过SSL验证
+# - 模拟真实浏览器请求
+```
+
+#### 针对特定网站
+
+**方法1：使用浏览器登录后转换**
+1. 在浏览器中正常登录需要验证的网站
+2. 确保图片可以在浏览器中正常显示
+3. 运行转换命令，程序会自动读取浏览器Cookie
+
+**方法2：手动配置请求头**
+编辑 `src/config/image_config.yaml` 文件：
+
+```yaml
+# 图片下载配置
+use_browser_cookies: true    # 使用浏览器Cookie
+verify_ssl: false           # 跳过SSL验证
+timeout: 15                 # 超时时间
+
+# 自定义请求头
+custom_headers:
+  User-Agent: "Mozilla/5.0 ..."
+  Referer: "https://your-site.com"
+  Authorization: "Bearer your-token"
+```
+
+### 📊 效果对比
+
+| 功能 | 之前 | 现在 |
+|------|------|------|
+| SSL证书验证 | ❌ 失败报错 | ✅ 自动跳过验证 |
+| 需要登录的图片 | ❌ 403/401错误 | ✅ 自动使用浏览器Cookie |
+| 反爬虫网站 | ❌ 被拒绝访问 | ✅ 模拟真实浏览器 |
+| 网络超时 | ❌ 直接失败 | ✅ 智能重试 |
+| 下载进度 | ❌ 无反馈 | ✅ 显示字节数 |
+
+### 🔍 调试信息
+
+程序会显示详细的下载信息：
+
+```bash
+[COOKIES] Loaded cookies from Chrome          # Cookie加载状态
+[IMAGE] fetching: https://example.com/img.jpg # 开始下载
+[SUCCESS] Downloaded 144868 bytes             # 下载成功
+```
+
+如果遇到问题，会显示具体错误：
+```bash
+[SSL ERROR] certificate verify failed         # SSL问题
+[NETWORK ERROR] Connection timeout            # 网络问题
+[FALLBACK] Using urllib with SSL disabled     # 使用备用方法
+```
+
+### 🎯 支持的场景
+
+- ✅ **企业内网图片**（自签名SSL证书）
+- ✅ **私有相册图片**（需要登录验证）
+- ✅ **图床服务**（反爬虫保护）
+- ✅ **API接口图片**（需要Authorization）
+- ✅ **CDN加速图片**（需要Referer验证）
+
+### 🆘 常见问题
+
+**Q: 图片还是下载失败怎么办？**
+A: 检查以下几点：
+1. 确保浏览器中能正常访问图片
+2. 检查网络连接
+3. 尝试增加超时时间
+4. 查看错误信息，可能需要特殊的请求头
+
+**Q: 某些私有图片无法下载？**
+A: 
+1. 先在浏览器中登录相关网站
+2. 确保浏览器Cookie可访问（关闭隐私模式）
+3. 可能需要手动配置特殊的请求头
 
 ## 自定义样式参数
 
@@ -118,7 +231,6 @@ h1: # 段落类型名称，可取的值见上表
     after: 0 # 段后空格，默认 [0] pt
 ```
 
-
 ## 从源码构建
 
 1. 需要 Python 3.0+ 环境
@@ -126,11 +238,14 @@ h1: # 段落类型名称，可取的值见上表
 3. 入口文件 `markdocx.py`
 4. 构建可执行文件
    1. Windows 下运行 `build.bat`
-   2. macOS 复制 `build.bat` 中的命令到终端执行（待验证）
+   2. Ubuntu/Linux 下运行 `./build_ubuntu.sh`
+   3. macOS 复制 `build.bat` 中的命令到终端执行（待验证）
 
 ## 未来计划
 
 - [x] 使用 YAML 导入样式参数
+- [x] 增强图片下载功能（支持SSL、Cookie、反爬虫）
+- [x] Ubuntu/Linux 系统支持
 - [ ] 支持更多段落类型设置
 - [ ] 提供 GUI
 - [ ] 提供 macOS 版本。目前我只有 Windows 设备，欢迎参与贡献:)
@@ -161,3 +276,5 @@ h1: # 段落类型名称，可取的值见上表
 - [python-markdown](https://python-markdown.github.io)
 - [beautifulsoup4](https://beautifulsoup.readthedocs.io)
 - [pyyaml](https://pyyaml.org)
+- [requests](https://docs.python-requests.org)
+- [browser-cookie3](https://github.com/borisbabic/browser_cookie3)

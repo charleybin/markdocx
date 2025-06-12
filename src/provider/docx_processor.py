@@ -21,6 +21,7 @@ from requests import HTTPError
 from src.provider.docx_plus import add_hyperlink
 from src.provider.style_manager import StyleManager
 from src.utils.style_enum import MDX_STYLE
+from src.utils.image_downloader import download_image
 
 debug_state: bool = False
 auto_open: bool = True
@@ -107,26 +108,29 @@ class DocxProcessor:
             img_src = img_tag["src"]
             # 网络图片
             if img_src.startswith("http://") or img_src.startswith("https://"):
-                print("[IMAGE] fetching:", img_src)
                 try:
-                    image_bytes = urlopen(img_src, timeout=10).read()
-                    data_stream = io.BytesIO(image_bytes)
-                    run.add_picture(data_stream, width=Inches(5.7 * scale / 100))
+                    # 使用增强的图片下载器
+                    data_stream = download_image(img_src, timeout=10)
+                    if data_stream:
+                        run.add_picture(data_stream, width=Inches(5.7 * scale / 100))
                 except Exception as e:
-                    print("[RESOURCE ERROR]:", e)
+                    print("[ENHANCED DOWNLOADER ERROR]:", e)
             else:
                 # 本地图片
-                run.add_picture(img_src, width=Inches(5.7 * scale / 100))
+                try:
+                    run.add_picture(img_src, width=Inches(5.7 * scale / 100))
+                except Exception as e:
+                    print("[LOCAL IMAGE ERROR]:", e)
         else:
-            # 网络图片
+            # 网络图片（从title属性获取）
             img_src = img_tag["title"]
-            print("[IMAGE] fetching:", img_src)
             try:
-                image_bytes = urlopen(img_src, timeout=10).read()
-                data_stream = io.BytesIO(image_bytes)
-                run.add_picture(data_stream, width=Inches(5.7 * scale / 100))
+                # 使用增强的图片下载器
+                data_stream = download_image(img_src, timeout=10)
+                if data_stream:
+                    run.add_picture(data_stream, width=Inches(5.7 * scale / 100))
             except Exception as e:
-                print("[RESOURCE ERROR]:", e)
+                print("[ENHANCED DOWNLOADER ERROR]:", e)
 
         # 如果选择展示图片描述，那么描述会在图片下方显示
         if show_image_desc and img_tag.get("alt"):
