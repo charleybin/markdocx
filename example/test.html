@@ -1,0 +1,148 @@
+<head><meta charset="utf-8"></head>
+<body>
+<h1>总结表</h1>
+<table>
+<thead>
+<tr>
+<th>型号</th>
+<th>显存</th>
+<th>算力FP16（TFLOPS）</th>
+<th>支持虚拟化</th>
+<th>支持并发</th>
+<th>GLM推理</th>
+<th>GLM轻量微调</th>
+<th>GLM 全量微调</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>4060ti</td>
+<td>16G</td>
+<td>22</td>
+<td>否</td>
+<td>1～2</td>
+<td>1 x 实例</td>
+<td>不支持</td>
+<td>需要 x 20卡</td>
+</tr>
+<tr>
+<td>4090</td>
+<td>24G</td>
+<td>164</td>
+<td>否</td>
+<td>8</td>
+<td>1 x 实例</td>
+<td>支持</td>
+<td>需要 x 14卡</td>
+</tr>
+<tr>
+<td>3090</td>
+<td>24G</td>
+<td>164</td>
+<td>否</td>
+<td>8</td>
+<td>1 x 实例</td>
+<td>支持</td>
+<td>需要 x 14卡</td>
+</tr>
+<tr>
+<td>A6000</td>
+<td>48G</td>
+<td>77</td>
+<td>是</td>
+<td>2～3</td>
+<td>3 x 实例</td>
+<td>支持</td>
+<td>需要 x 7卡</td>
+</tr>
+<tr>
+<td>A100</td>
+<td>40G</td>
+<td>165</td>
+<td>是</td>
+<td>8</td>
+<td>2 x 实例</td>
+<td>支持</td>
+<td>需要 x 8卡</td>
+</tr>
+<tr>
+<td>A100</td>
+<td>80G</td>
+<td>312</td>
+<td>是</td>
+<td>15</td>
+<td>5 x 实例</td>
+<td>支持</td>
+<td>需要 x 4卡</td>
+</tr>
+<tr>
+<td>H100</td>
+<td>80G</td>
+<td>1513,1979,3979（不同接口）</td>
+<td>是</td>
+<td>75～200</td>
+<td>5 x 实例</td>
+<td>支持</td>
+<td>需要 x 4卡</td>
+</tr>
+<tr>
+<td>昇腾910</td>
+<td>32G</td>
+<td>313</td>
+<td>是</td>
+<td>15</td>
+<td>2 x 实例</td>
+<td>支持</td>
+<td>需要 x 10卡</td>
+</tr>
+<tr>
+<td>昇腾910B</td>
+<td>64G</td>
+<td>370</td>
+<td>是</td>
+<td>18</td>
+<td>4 x 实例</td>
+<td>支持</td>
+<td>需要 x 5卡</td>
+</tr>
+</tbody>
+</table>
+<h2>并发性能计算过程 （纯理论计算）</h2>
+<p>根据智谱提供的信息，8卡昇腾910 能提供126路并发。
+得出 =&gt; 单卡并发为15个</p>
+<p>由于昇腾910 的算力为313 FP16，能提供15个并发。
+<font color=red>得出 =&gt; GLM3-6B的单并发需求为【20.8 FP16】</font></p>
+<p>综上结论：
+由于4060ti 的FP16 为22 FLOPS，刚好满足单并发任务的需求。</p>
+<h2>实例计算过程</h2>
+<p>GLM3-6B以 FP16 精度加载，运行上述代码需要大概 13GB 显存，如果是GLM3-6B-32K版本则需要14G显存。 以上仅为加载到GPU最低显存需求，实际推理过程中，显存会出现上涨浮动。在使用过程中，发现GLM3-6B对显存的使用达到过17.3G显存
+可以理解为<font color=red>15G～16G显存为正常运行推理的最低配置需求。</font></p>
+<h2>能否进行微调计算过程</h2>
+<p>【轻量微调】
+粗略按照推理内存消耗的两倍计算</p>
+<p>【全量微调】
+根据GLM2-6B官方培训资料，微调需要 A100 x 4 卡，约 320G 显存为参考标准。
+以下为官方资料截图：
+<img alt="" src="https://218.241.161.59:5000//server/index.php?s=/api/attachment/visitFile&amp;sign=eb9df38d1bcc6f42300060364a298422" /></p>
+<h1>AI算力数据</h1>
+<p><img alt="" src="https://218.241.161.59:5000//server/index.php?s=/api/attachment/visitFile&amp;sign=23769cf110fe3342045f36bd7c5788f3" /></p>
+<p><img alt="" src="https://218.241.161.59:5000//server/index.php?s=/api/attachment/visitFile&amp;sign=fd380a9689b22626d75a5675640b4339" /></p>
+<p>入门级AI卡，RTX 4060 ti 的【单精度浮点算力】大约为22.06 TFLOPS
+平民顶配AI卡，RTX 4090 ti 的【单精度浮点算力】大约为82.06 TFLOPS
+4060ti 的算力约为 4090的 1/4 左右。
+A6000显卡的【单精度浮点算力】大约为38.7 TFLOPS</p>
+<h1>参考资料：</h1>
+<p>真实性能如何？RTX 4060 Ti 测试报告
+https://zhuanlan.zhihu.com/p/631651468</p>
+<p>2023年最新最全的显卡深度学习AI算法算力排行（包括单精度FP32和半精度FP16的对比）：
+https://zhuanlan.zhihu.com/p/665120615?utm_id=0</p>
+<p>如何评价华为 8.23 正式推出 AI 处理器昇腾 910 和全场景 AI 计算框架？
+https://www.zhihu.com/question/342327559/answer/3261672301</p>
+<p>GPU A100 性能测试报告：
+https://zhuanlan.zhihu.com/p/645052868?utm_id=0</p>
+<p>GLM3官方github仓库
+https://github.com/THUDM/ChatGLM3</p>
+<p>4060Ti-16G、4070Ti、4090显卡的深度学习性能测试和结论
+https://www.bilibili.com/read/cv22000735/</p>
+<p>6*RTX4090+静音---当下最强深度学习工作站/集群硬件配置
+https://www.bilibili.com/read/cv22718070/</p></body>

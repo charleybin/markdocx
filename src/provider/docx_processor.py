@@ -306,7 +306,7 @@ class DocxProcessor:
         soup = BeautifulSoup(html_str, 'html.parser')
         body_tag = soup.contents[2]
         # 将工作目录切换到指定目录
-        os.chdir(os.path.abspath(html_path + "\\.."))
+        os.chdir(os.path.dirname(os.path.abspath(html_path)))
         # 逐个解析标签，并写到word中
         for root in body_tag.children:
             if root.string != "\n":

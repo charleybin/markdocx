@@ -12,3 +12,7 @@ beautifulsoup4 == 4.10.0
 # D:\Projects\Python\markdocx\src\test\test_html2docx.py: 12,13,14,15
 python_docx == 0.8.11
 
+# Additional dependencies for cross-platform support
+pyinstaller >= 5.0.0
+PySide6 >= 6.0.0
+

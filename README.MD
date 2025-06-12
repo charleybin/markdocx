@@ -9,8 +9,51 @@
 ![example](assets/example.png)
 
 ## 使用方法
+
+### Windows 系统
 1. 在 [Release](https://github.com/greyovo/markdocx/releases) 下载可执行文件（暂未提供 macOS 版）
 2. 在可执行文件所在目录，终端执行命令：`.\markdocx path/to/your/file.md`，会在 md 文件的同目录下生成同名 docx 文件。
+
+### Ubuntu/Linux 系统
+
+#### 方式1：使用便捷脚本（推荐）
+1. 运行安装脚本：
+   ```bash
+   ./setup_ubuntu.sh
+   ```
+
+2. 使用转换工具：
+   ```bash
+   # 显示帮助信息
+   ./markdocx_ubuntu.sh
+   
+   # 转换markdown文件
+   ./markdocx_ubuntu.sh example/example.md
+   
+   # 指定输出文件
+   ./markdocx_ubuntu.sh input.md -o output.docx
+   
+   # 转换后自动打开文件
+   ./markdocx_ubuntu.sh input.md -a
+   ```
+
+#### 方式2：直接使用Python脚本
+```bash
+# 安装依赖
+/opt/miniconda3/envs/office-service/bin/pip install -r requirements.txt
+
+# 运行转换
+/opt/miniconda3/envs/office-service/bin/python src/markdocx.py example/example.md
+```
+
+#### 方式3：构建可执行文件
+```bash
+# 构建
+./build_ubuntu.sh
+
+# 使用构建的可执行文件
+./dist/markdocx example/example.md
+```
 
 完整命令示例：
 
